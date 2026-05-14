@@ -103,13 +103,14 @@ Based on your focus on hydrology, water resources, and mining impacts, here are 
 - **Processing**: Categorical data, use nearest-neighbor resampling
 - **Notes**: Track deforestation that may relate to mining, logging, or development
 
-### Streamflow Data
+### Streamflow and Water Quality Data
 
 ### 10. **USGS Stream Gages - National Water Dashboard** ✓ CONFIRMED
 - **Type**: Vector (point locations with time series data)
 - **API URL**: `https://waterservices.usgs.gov/nwis/iv/` (Instantaneous Values)
 - **API URL**: `https://waterservices.usgs.gov/nwis/dv/` (Daily Values)
 - **API URL**: `https://waterservices.usgs.gov/nwis/site/` (Site Information)
+- **API URL**: `https://waterservices.usgs.gov/nwis/wq/` (Water Quality)
 - **Dashboard**: `https://dashboard.waterdata.usgs.gov/app/nwd/en/`
 - **Purpose**: Real-time and historical streamflow measurements from USGS stream gages
 - **Processing**:
@@ -127,7 +128,34 @@ Based on your focus on hydrology, water resources, and mining impacts, here are 
   - Useful for validating hydrologic models and assessing water availability
   - National Water Dashboard provides interactive visualization and data access
 
-### 11. **USGS Streamflow Statistics** (Derived from gage data)
+### 11. **USGS Water Quality - pH Measurements** ✓ CONFIRMED
+- **Type**: Vector (point locations with water quality time series)
+- **API URL**: `https://waterservices.usgs.gov/nwis/wq/` (Water Quality)
+- **Purpose**: pH measurements as an indicator of watershed health and mining impacts
+- **Processing**:
+  - Query water quality stations within Black Hills HUC8 watersheds
+  - Extract pH statistics (mean, min, max, standard deviation)
+  - Identify stations with abnormal pH values (potential contamination)
+  - Correlate pH with proximity to mining sites
+- **Key Parameters**:
+  - Parameter code: `00915` (pH, standard units)
+  - Additional water quality parameters available:
+    - `00931` (Specific conductance, microsiemens/cm)
+    - `00010` (Temperature, water, Fahrenheit)
+    - `00631` (Nitrate+nitrite as N, mg/L)
+    - `00630` (Nitrate as N, mg/L)
+    - `00664` (Phosphate as P, mg/L)
+    - `00600` (Sediment, total, mg/L)
+  - Format: `json` or `rdb` (tab-delimited)
+  - Time period: Match climate periods (1991-2020, 2012-2021)
+- **Notes**:
+  - pH is a critical indicator of acid mine drainage and water quality
+  - Normal stream pH ranges from 6.5-8.5; values outside this range may indicate contamination
+  - Mining activities can lower pH through acid rock drainage
+  - USGS NWIS water quality database provides historical and recent measurements
+  - Can be correlated with uranium mine locations to assess mining impacts
+
+### 12. **USGS Streamflow Statistics** (Derived from gage data)
 - **Type**: Vector (point attributes) or Raster (interpolated)
 - **Source**: Computed from NWIS API data
 - **Purpose**: Statistical summaries of streamflow for each gage
@@ -251,6 +279,12 @@ All outputs will be saved to `workflows/black_hills_hydrology/output/`:
 - `harmonized_mines_buffered_1km.geojson` - 1km buffer zones around mines
 - `harmonized_mines_buffered_5km.geojson` - 5km buffer zones around mines
 
+**Water Quality**:
+- `harmonized_usgs_gages.geojson` - USGS stream gage locations with attributes
+- `harmonized_streamflow_stats.geojson` - Gage locations with flow statistics
+- `harmonized_water_quality_ph.geojson` - pH measurement stations with statistics
+- `harmonized_water_quality_conductivity.geojson` - Specific conductance stations
+
 ### Visualizations
 - `harmonized_visualization.png` - Multi-panel static map (required filename)
 - `harmonized_visualization.html` - Interactive Folium map
@@ -359,11 +393,24 @@ With the harmonized datasets, you will be able to:
    - Track snow water equivalent (critical for Black Hills water supply)
    - Detect climate change signals (compare 30-yr normal to recent decade)
 
-3. **Stream Network Analysis**
+3. **Stream Network and Flow Analysis**
    - Map stream density and distribution
    - Identify stream orders and connectivity
    - Locate waterbodies and reservoirs
    - Calculate distance from streams to mine sites
+   - Analyze streamflow patterns from USGS gages
+   - Compare streamflow between 30-year normal and recent decade
+   - Identify gages with declining flows (potential water stress)
+   - Assess streamflow proximity to mining sites
+
+4. **Water Quality Assessment (pH)**
+   - Map pH measurement stations across Black Hills watersheds
+   - Calculate pH statistics (mean, min, max, standard deviation) by station
+   - Identify stations with abnormal pH values (outside 6.5-8.5 range)
+   - Correlate pH anomalies with proximity to uranium mines
+   - Assess temporal trends in pH (improving/degrading water quality)
+   - Create pH interpolation map (kriging/IDW) to show spatial patterns
+   - Evaluate acid mine drainage potential based on pH and geology
 
 4. **Mining Impact Assessment**
    - Map mine locations relative to watersheds and streams
@@ -395,13 +442,15 @@ With the harmonized datasets, you will be able to:
    - Detect shifts in water availability
 
 ### Visualization Examples
-- **Multi-panel map**: Watersheds, streams, mine locations, elevation, forest cover, precipitation, stream gages
-- **Interactive map**: Layer toggles for all variables, clickable mine sites and stream gages with metadata
+- **Multi-panel map**: Watersheds, streams, mine locations, elevation, forest cover, precipitation, stream gages, pH stations
+- **Interactive map**: Layer toggles for all variables, clickable mine sites, stream gages, and pH stations with metadata
 - **Mining impact map**: Mines overlaid on streams with buffer zones showing affected areas
 - **Streamflow analysis**: Gage locations sized by flow magnitude, colored by trend (increasing/decreasing)
+- **Water quality map**: pH stations colored by mean pH values, with symbols sized by standard deviation
+- **pH anomaly map**: Stations with abnormal pH values (outside 6.5-8.5) highlighted with proximity to mines
 - **Climate comparison**: Side-by-side 30-year normal vs. recent decade for all climate variables
 - **Forest change map**: Tree cover 2000 vs. forest loss through 2024
-- **Watershed summary statistics**: Tables and charts by HUC8/HUC10 including streamflow data
+- **Watershed summary statistics**: Tables and charts by HUC8/HUC10 including streamflow and pH data
 - **Topographic analysis**: Elevation, slope, and aspect maps with mine locations and stream gages
 - **Water availability map**: Precipitation, streamflow, and mining locations to assess water stress
 
