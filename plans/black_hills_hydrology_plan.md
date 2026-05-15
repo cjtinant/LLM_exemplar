@@ -80,6 +80,20 @@ Based on your focus on hydrology, water resources, and mining impacts, here are 
 - **Processing**: Keep as vector or rasterize to show mining density
 - **Notes**: Black Hills has significant historical mining activity; critical for impact assessment
 
+### 7. **USGS TopoMine Symbols — National Shapefiles (ver. 10.0)** ✓ CONFIRMED
+- **Type**: Vector (points/polygons)
+- **URL**: `https://www.sciencebase.gov/catalog/file/get/5a1492c3e4b09fc93dcfd574?name=USGS_TopoMineSymbols_ver10_Shapefiles.zip`
+- **Purpose**: Comprehensive historical mining features digitized from USGS 7.5- and 15-minute topographic maps including prospect pits, mine shafts, adits, quarries, open-pit mines, tailings piles, gravel pits, and other mining-related symbols
+- **Processing**: Keep as vector (rasterize=False) to preserve mine feature geometry and attributes
+- **Resolution**: Point and polygon features from historical maps (1886–2006)
+- **Notes**:
+  - National dataset (~253 MB) — filter to South Dakota by state boundary or state code attribute during workflow
+  - Covers all mine types (gold, silver, copper, uranium, iron, etc.)
+  - Provides much broader mining coverage than EPA uranium dataset alone
+  - Black Hills region has extensive historical gold/silver mining legacy
+  - Features include attribute data on mine type (`Ftr_Type`), map scale, and source quadrangle
+  - **Filtering Strategy**: The `Ftr_Type` field contains feature types like "Uranium Mine", "Prospect Pit", "Adit", "Mine Shaft", "Open Pit Mine or Quarry", "Tailings", "Gravel Pit", etc. Filter to include metallic mining features while excluding generic "Gravel Pit" and "Borrow Pit" entries. Combine with EPA uranium data for comprehensive coverage.
+
 ### 7. **EPA Air Quality Index by County** (Optional)
 - **Type**: Tabular (CSV)
 - **URL**: `https://aqs.epa.gov/aqsweb/airdata/annual_aqi_by_county_2022.zip`
@@ -275,9 +289,10 @@ All outputs will be saved to `workflows/black_hills_hydrology/output/`:
 - `harmonized_wbd_huc12.geojson` - HUC12 micro-watersheds
 
 **Mining**:
-- `harmonized_uranium_mines.geojson` - Uranium mine locations
-- `harmonized_mines_buffered_1km.geojson` - 1km buffer zones around mines
-- `harmonized_mines_buffered_5km.geojson` - 5km buffer zones around mines
+- `harmonized_uranium_mines.geojson` - EPA uranium mine locations
+- `harmonized_usmin_mines.geojson` - USGS TopoMine symbols (all mine types: gold, silver, copper, uranium, prospects)
+- `harmonized_mines_buffered_1km.geojson` - 1km buffer zones around all mines
+- `harmonized_mines_buffered_5km.geojson` - 5km buffer zones around all mines
 
 **Water Quality**:
 - `harmonized_usgs_gages.geojson` - USGS stream gage locations with attributes
@@ -300,6 +315,7 @@ python scripts/check_urls.py \
   "https://prd-tnm.s3.amazonaws.com/StagedProducts/Hydrography/WBD/National/GDB/WBD_National_GDB.zip" \
   "https://www.mrlc.gov/downloads/sciweb1/shared/mrlc/data-bundles/Annual_NLCD_LndCov_2024_CU_C1V1.zip" \
   "https://www.epa.gov/sites/default/files/2015-03/uld-ii_gis.zip" \
+  "https://www.sciencebase.gov/catalog/file/get/5a1492c3e4b09fc93dcfd574?name=USGS_TopoMineSymbols_ver10_Shapefiles.zip" \
   "https://storage.googleapis.com/earthenginepartners-hansen/GFC-2024-v1.12/Hansen_GFC-2024-v1.12_treecover2000_50N_110W.tif" \
   "https://storage.googleapis.com/earthenginepartners-hansen/GFC-2024-v1.12/Hansen_GFC-2024-v1.12_lossyear_50N_110W.tif"
 
@@ -413,12 +429,14 @@ With the harmonized datasets, you will be able to:
    - Evaluate acid mine drainage potential based on pH and geology
 
 4. **Mining Impact Assessment**
-   - Map mine locations relative to watersheds and streams
+   - Map all mine locations (EPA uranium + USGS TopoMine) relative to watersheds and streams
+   - Distinguish mine types: uranium (EPA) vs. metallic minerals - gold, silver, copper (USGS TopoMine)
    - Identify downstream water resources potentially affected by mining
-   - Calculate mine density by watershed
+   - Calculate mine density by watershed and mine type
    - Create buffer zones around mines to assess affected areas
    - Correlate mine locations with water quality indicators (if available)
    - Assess proximity of mines to drinking water sources
+   - Analyze historical mining legacy from TopoMine symbols (1886–2006 timeline)
 
 5. **Forest-Hydrology Relationships**
    - Assess forest cover effects on water yield and quality
@@ -442,9 +460,9 @@ With the harmonized datasets, you will be able to:
    - Detect shifts in water availability
 
 ### Visualization Examples
-- **Multi-panel map**: Watersheds, streams, mine locations, elevation, forest cover, precipitation, stream gages, pH stations
-- **Interactive map**: Layer toggles for all variables, clickable mine sites, stream gages, and pH stations with metadata
-- **Mining impact map**: Mines overlaid on streams with buffer zones showing affected areas
+- **Multi-panel map**: Watersheds, streams, all mine locations (uranium + TopoMine), elevation, forest cover, precipitation, stream gages, pH stations
+- **Interactive map**: Layer toggles for all variables, clickable mine sites with type filtering (uranium vs. metallic), stream gages, and pH stations with metadata
+- **Mining impact map**: All mines overlaid on streams with buffer zones showing affected areas, color-coded by mine type/commodity
 - **Streamflow analysis**: Gage locations sized by flow magnitude, colored by trend (increasing/decreasing)
 - **Water quality map**: pH stations colored by mean pH values, with symbols sized by standard deviation
 - **pH anomaly map**: Stations with abnormal pH values (outside 6.5-8.5) highlighted with proximity to mines
@@ -513,7 +531,9 @@ With the harmonized datasets, you will be able to:
 
 ### Phase 5: Mining Data
 1. EPA uranium mine locations
-2. Create mine buffer zones (1km, 5km)
+2. USGS TopoMine symbols (usmin-SD) — filter `Ftr_Type` to include metallic mining features (exclude "Gravel Pit", "Borrow Pit")
+3. Merge EPA uranium + filtered TopoMine into unified mine layer
+4. Create mine buffer zones (1km, 5km) from merged layer
 
 ### Phase 6: Analysis and Visualization
 1. Generate multi-panel static visualization
@@ -535,8 +555,8 @@ With the harmonized datasets, you will be able to:
 ✓ **CRS**: EPSG:32613 (UTM Zone 13N)  
 ✓ **Resolution**: 270 meters  
 ✓ **Climate Periods**: 30-year normal (1991-2020) + Recent decade (2012-2021)  
-✓ **Key Additions**: DEM, forest cover, uranium mine locations  
-✓ **Analysis Goal**: Assess potential mining impacts on water resources
+✓ **Key Additions**: DEM, forest cover, uranium mine locations (EPA), comprehensive historical mining features (USGS TopoMine)
+✓ **Analysis Goal**: Assess potential mining impacts on water resources with complete mining legacy coverage
 
 ---
 

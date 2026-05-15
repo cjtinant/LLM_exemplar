@@ -139,6 +139,18 @@ datasets:
     topics: [hazards, contamination, mining]
     notes: Point/polygon locations of uranium mines in the US. From ESIIL Data Library hazards/Uranium_mines.
 
+  - name: USGS TopoMine Symbols — National Shapefiles (ver. 10.0)
+    type: vector
+    source: USGS Mineral Resources Program
+    url: https://www.sciencebase.gov/catalog/file/get/5a1492c3e4b09fc93dcfd574?name=USGS_TopoMineSymbols_ver10_Shapefiles.zip
+    topics: [hazards, mining, historical]
+    notes: >
+      National shapefile archive (~253 MB) of prospect- and mine-related features digitized from
+      USGS 7.5- and 15-minute topographic maps (1886–2006). Contains separate shapefiles per state
+      (e.g., usmin-SD.shp for South Dakota). Keep as vector (rasterize=False). The `Ftr_Type` field
+      encodes feature type (e.g., "Uranium Mine", "Prospect Pit", "Adit", "Gravel Pit"). Filter by
+      state and feature type during workflow. See https://mrdata.usgs.gov/usmin/ for documentation.
+
   - name: USGS Watershed Boundary Dataset (WBD) — National
     type: vector
     source: USGS / USDA
