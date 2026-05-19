@@ -46,7 +46,7 @@ For the current workshop:
 
 Use the direct launch link for this workshop. It opens the correct CyVerse app, so you do not need to search for the application manually.
 
-<a href="https://de.cyverse.org/instantlaunch/75a5a13e-7980-11f0-b7e6-008cfa5ae621" target="_blank" rel="noopener noreferrer"><img src="https://de.cyverse.org/Powered-By-CyVerse-blue.svg" alt="Launch this workshop environment in CyVerse"></a>
+<a href="https://de.cyverse.org/apps/de/c0956b30-3f32-11f0-9712-008cfa5ae621/launch" target="_blank" rel="noopener noreferrer"><img src="https://de.cyverse.org/Powered-By-CyVerse-blue.svg" alt="Launch this workshop environment in CyVerse"></a>
 
 If CyVerse asks you to sign in, log in with your CyVerse account and continue with the launch.
 
@@ -55,7 +55,7 @@ On the launch page:
 1. Confirm that the app is the ESIIL OASIS training environment.
 2. Ensure the container image **Version** is `Innovation_Summit_2026`.
 3. Name the analysis, decide where you want it saved, and complete the remaining analysis information fields.
-4. In **Advanced Settings**, select **4** or **8 CPU Cores**. Start with **4**, but if you run out of memory, select **8** in the future.
+4. In **Advanced Settings**, select **8 CPU Cores** and **64GB for Minimum Memory**. 
 5. Click **Launch Analysis**, **Run**, or the final launch button shown by CyVerse.
 
 ![Screenshot showing the ESIIL_OASIS launch page with Version 4.5 selected.](assets/images/cyverse/cyverse-04-launch-version.png)
@@ -64,7 +64,7 @@ On the launch page:
 
 ![Screenshot showing the Advanced Settings CPU Cores dropdown with 4 and 8 highlighted.](assets/images/cyverse/cyverse-04-cpu-cores.png)
 
-*Select 4 or 8 CPU Cores in Advanced Settings.*
+*Select 8 CPU Cores and 64GB Minimum Memory in Advanced Settings.*
 
 ??? info "If the direct launch link is not working"
     Use the longer CyVerse navigation path:
@@ -110,99 +110,8 @@ This is the working folder used in the current training image.
 
 *Opening the interactive VS Code workspace.*
 
-![Screenshot showing the New Terminal menu item inside VS Code.](assets/images/cyverse/cyverse-07-terminal.png)
 
-*Opening a terminal inside the CyVerse workspace.*
-
-## Step 3: Confirm Git and Python are available
-
-In the terminal, run:
-
-```bash
-git --version
-python --version
-pwd
-```
-
-You should see a Git version, a Python version, and your current working directory. The exact versions do not need to match everyone else's as long as the lesson environment was launched from the correct app.
-
-If `python` does not work, try:
-
-```bash
-python3 --version
-```
-
-If Git or Python is missing, confirm that you launched the correct CyVerse app.
-
-## Step 4: Connect to GitHub and clone the lesson repository
-
-There are two good ways to connect this environment to GitHub. The widget path is usually easier for new users because it uses JupyterLab's graphical interface and browser-based authorization. The terminal path gives you more direct control and is useful once you are comfortable with Git commands. Both approaches connect the same working environment to the same GitHub repository.
-
-<div class="github-path-panels">
-  <div class="github-path-panel github-path-widget">
-    <h3>Path 1: JupyterLab GitHub Widget</h3>
-    <p><strong>Best for:</strong> learners who want a guided, visual way to connect GitHub without typing Git commands.</p>
-    <ol>
-      <li>Open JupyterLab in your running instance.</li>
-      <li>Find the GitHub or Git widget in the JupyterLab sidebar.</li>
-      <li>Choose the option to sign in, authenticate, or authorize GitHub.</li>
-      <li>Use the web authorization flow when prompted. This will open GitHub in a browser window.</li>
-      <li>Approve the requested access in GitHub.</li>
-      <li>Return to JupyterLab and confirm that the widget now shows your GitHub account or repository access.</li>
-      <li>Clone or open the lesson repository from the widget interface: <code>https://github.com/CU-ESIIL/LLM_lesson_exemplar.git</code>.</li>
-    </ol>
-    <p><strong>Why use this path?</strong> The widget keeps the process visual. It is a good choice when you are new to Git, when you are working in a workshop setting, or when you want to avoid command-line authentication issues.</p>
-  </div>
-  <div class="github-path-panel github-path-terminal">
-    <h3>Path 2: Terminal Git</h3>
-    <p><strong>Best for:</strong> learners who are comfortable with the command line or who want direct control over Git commands.</p>
-    <ol>
-      <li>Move to a working directory where you want the lesson files to live. For the current CyVerse training image, the working folder may be:</li>
-    </ol>
-    <pre><code class="language-bash">cd /home/jovyan/work/</code></pre>
-    <p>If that folder does not exist, use your home directory:</p>
-    <pre><code class="language-bash">cd ~</code></pre>
-    <p>Clone the lesson repository:</p>
-    <pre><code class="language-bash">git clone https://github.com/CU-ESIIL/LLM_lesson_exemplar.git
-cd LLM_lesson_exemplar</code></pre>
-    <p>Confirm that you are inside the repository:</p>
-    <pre><code class="language-bash">ls</code></pre>
-    <p>You should see files such as <code>README.md</code>, <code>docs/</code>, <code>mkdocs.yml</code>, <code>examples/</code>, or lesson-related folders.</p>
-    <p>If you used the VS Code file browser to open <code>/home/jovyan/work/</code>, navigate into the <code>LLM_lesson_exemplar</code> folder after cloning. This is the folder you will use for Roo and terminal commands.</p>
-    <p><img src="assets/images/cyverse/cyverse-08-github-clone.png" alt="Screenshot showing the terminal command to clone the lesson repository from GitHub."></p>
-    <p><em>Cloning the lesson repository from GitHub.</em></p>
-    <p>If you plan to edit the lesson and push changes back to GitHub, fork the repository first and clone your fork instead. For simply running the lesson, cloning the public repository is enough.</p>
-    <p><strong>Why use this path?</strong> The terminal path is flexible and explicit. It is useful for troubleshooting, for advanced Git workflows, and for users who already manage repositories from the command line.</p>
-  </div>
-</div>
-
-You only need to complete one of these paths. Once your environment is connected to GitHub, continue to the next step in the workflow.
-
-## Step 5: Create or activate the Python environment
-
-Use the dependency path maintained by the repository. Start with the standard virtual environment approach unless the repository has a different documented setup.
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-If `python` does not work but `python3` does, use:
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-When the environment is active, your terminal prompt may show `(.venv)` at the beginning of the line.
-
-If the repository includes a Conda environment file, such as `environment.yml`, and the instructor tells you to use Conda, use the instructor-provided command instead. Do not mix Conda and virtual environment setup unless you know why you are doing it.
-
-## Step 6: Configure Roo and model credentials
+## Step 3: Configure Roo and model credentials
 
 Most LLM workflows need either an API key or a model endpoint. For this workshop, configure Roo inside VS Code to use the CyVerse-hosted OpenAI-compatible endpoint.
 
@@ -270,7 +179,7 @@ Configure Roo to automatically run tasks. Otherwise, you will need to monitor th
 
 *Roo Code mode turned on before running the workflow.*
 
-## Step 7: Run the reference workflow
+## Step 4: Run the reference workflow
 
 From the repository root, run the reference example. Use the command maintained by the repository. If the current repository command is still the Colorado fire risk example, use:
 
@@ -331,7 +240,7 @@ If Roo gets stuck on **API Request** for more than 30 seconds:
 
 If the model is doing poorly, try another model.
 
-## Step 8: Check the outputs
+## Step 5: Check the outputs
 
 Look for generated outputs in the workflow output folder. For the Colorado fire risk example, start with:
 
@@ -359,7 +268,7 @@ If the output is a map, image, notebook, or HTML file, open it from the file bro
 
 *Checking repository and output files in the workspace file browser.*
 
-## Step 9: Save or download your results
+## Step 6: Save or download your results
 
 CyVerse sessions are cloud-based. Depending on the training environment, files may persist in CyVerse storage, or they may disappear when the analysis is deleted. Before closing the session, save anything you need.
 

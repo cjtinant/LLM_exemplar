@@ -8,7 +8,7 @@ Instead of writing custom scripts for each dataset, the workflow is:
 2. The LLM inspects the datasets
 3. The LLM decides how to harmonize them (CRS, extent, resolution)
 4. Shared Python functions perform the harmonization
-5. Outputs and maps are generated
+5. Outputs and maps are generated.
 
 ---
 

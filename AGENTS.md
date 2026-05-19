@@ -119,3 +119,35 @@ from src.geospatial_harmonizer import (
 
 GDAL CLI tools (`gdalwarp`, `ogr2ogr`, `gdal_translate`) are available for
 format conversion or preprocessing before running the harmonizer.
+
+---
+
+## Git Workflow
+
+After completing work on any prompt or task, commit changes with a verbose message:
+
+1. **Stage changes** — `git add <files>` or `git add .` for all changes
+2. **Commit with verbose message** — Include:
+   - What was done (specific files, datasets, decisions made)
+   - Why it was done (context, user requirements, analysis goals)
+   - Any key decisions or trade-offs made
+   - Status of the work (complete, in progress, blocked)
+3. **Example commit message**:
+   ```
+   Add Black Hills hydrology analysis plan with mining impact assessment
+   
+   - Created comprehensive project plan in plans/black_hills_hydrology_plan.md
+   - Defined 11 datasets: core hydrology (WBD, 3DHP, TerraClimate, NLCD, DEM),
+     mining impacts (EPA uranium mines), forest cover (Hansen), and streamflow
+     (USGS NWIS gages)
+   - Confirmed watershed-based boundary (HUC8: Cheyenne 10160002, Belle Fourche
+     10160003) for hydrologic coherence
+   - Specified dual climate periods (30-yr normal 1991-2020, recent decade
+     2012-2021) to detect climate change signals
+   - Planned 8-phase implementation workflow with mining impact analysis
+   - Next: Create workflow directory and write harmonization script
+   ```
+
+4. **Push to remote** — `git push origin <branch>` when ready to share
+
+This ensures reproducibility and clear documentation of analysis decisions.
